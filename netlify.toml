@@ -1,0 +1,36 @@
+# Netlify configuration for the Maka Projects website
+# Static one-page site — no build step. The repo root IS the publish directory.
+
+[build]
+  # Nothing to compile; just publish the files in the repo root.
+  publish = "."
+  command = ""
+
+# Send the bare apex/www to the canonical site (Netlify also handles the
+# www -> apex primary-domain redirect in the dashboard once the domain is added).
+
+[[redirects]]
+  from = "/home"
+  to = "/"
+  status = 301
+  force = false
+
+# Security + caching headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Long-cache the static image/icon assets
+[[headers]]
+  for = "/og-image.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/favicon.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

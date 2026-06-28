@@ -1,0 +1,23 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Logs & temp
+*.log
+*.tmp
+
+# Netlify local CLI state
+.netlify/
+
+# Dependency dirs (not used by this static site, but ignored defensively)
+node_modules/
+
+# Claude Code local settings (machine-specific)
+.claude/settings.local.json
