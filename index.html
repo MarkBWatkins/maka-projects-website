@@ -8,6 +8,7 @@
 <meta name="author" content="Mark Watkins — Maka Projects">
 <meta name="theme-color" content="#16202a">
 <link rel="canonical" href="https://makaprojects.co.nz/">
+<link rel="preload" as="image" href="/img/sh2-opotiki-road-lg.jpg">
 
 <!-- Favicon -->
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -119,7 +120,9 @@
   .about li{padding:12px 0;border-bottom:1px solid var(--line);font-size:.96rem;}
   .about li strong{display:block;}
   .about li span{color:var(--steel);font-size:.88rem;}
-  .photo-ph{background:repeating-linear-gradient(45deg,#e7e4de 0 14px,#efece6 14px 28px);border:1px dashed #b9b4ab;border-radius:4px;min-height:340px;display:flex;align-items:center;justify-content:center;color:#8a857c;font-size:.9rem;text-align:center;padding:20px;}
+  .about-photo{margin:0;}
+  .about-photo img{width:100%;height:100%;min-height:360px;object-fit:cover;border-radius:4px;display:block;}
+  .about-photo figcaption{font-size:.8rem;color:var(--steel);margin-top:8px;}
 
   /* Coverage */
   .coverage{background:var(--white);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
@@ -140,9 +143,45 @@
     nav ul{display:none;}
     header{padding:72px 0 64px;}
   }
+
+  /* Landing intro overlay */
+  #intro{position:fixed;inset:0;z-index:1000;background:var(--ink);overflow:hidden;--logoDur:6.5s;}
+  #intro.hide{opacity:0;visibility:hidden;transition:opacity .8s ease,visibility 0s .8s;}
+  #intro .ibg{position:absolute;inset:0;background:url(/img/sh2-opotiki-road-lg.jpg) center 46%/cover no-repeat;transform-origin:50% 41%;}
+  #intro .iscrim{position:absolute;inset:0;opacity:0;background:radial-gradient(120% 90% at 50% 41%,rgba(22,32,42,.10) 0%,rgba(22,32,42,.55) 55%,rgba(22,32,42,.94) 100%);}
+  #intro .ispine{position:absolute;left:50%;top:41%;width:2px;height:20%;transform:translateX(-50%);background:linear-gradient(180deg,rgba(242,237,228,.95),rgba(242,237,228,0));opacity:0;filter:blur(.3px);}
+  #intro .ilogo{position:absolute;left:50%;top:41%;transform:translate(-50%,-46%);text-align:center;width:64%;max-width:520px;opacity:0;}
+  #intro .ilogo img{width:120px;height:auto;display:block;margin:0 auto 16px;filter:drop-shadow(0 4px 18px rgba(0,0,0,.5));}
+  #intro .itag{color:#f6f2ea;font-weight:700;font-size:clamp(15px,2.1vw,21px);letter-spacing:.01em;opacity:0;text-shadow:0 2px 14px rgba(0,0,0,.6);}
+  #intro .iskip{position:absolute;right:18px;bottom:16px;z-index:2;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.45);color:#fff;font:600 13px/1 'Segoe UI',system-ui,sans-serif;padding:9px 16px;border-radius:6px;cursor:pointer;}
+  #intro .iskip:hover{background:rgba(0,0,0,.6);}
+  body.intro-on{overflow:hidden;}
+  #intro.play .ibg{animation:ipush 7s cubic-bezier(.33,0,.66,1) forwards;}
+  #intro.play .iscrim{animation:iscrim 6s ease-out 2.5s forwards;}
+  #intro.play .ispine{animation:ispine 3.5s ease-in-out 2.6s forwards;}
+  #intro.play .ilogo{animation:ilogo var(--logoDur) ease 4s forwards;}
+  #intro.play .itag{animation:itag 2s ease calc(4s + var(--logoDur) - .4s) forwards;}
+  @keyframes ipush{to{transform:scale(1.16);}}
+  @keyframes iscrim{to{opacity:1;}}
+  @keyframes ispine{0%{opacity:0;height:5%;}45%{opacity:.9;}100%{opacity:.55;height:22%;}}
+  @keyframes ilogo{0%{opacity:0;transform:translate(-50%,-46%) scale(.92);}100%{opacity:1;transform:translate(-50%,-50%) scale(1);}}
+  @keyframes itag{to{opacity:1;}}
+  @media (prefers-reduced-motion: reduce){#intro{display:none;}}
 </style>
 </head>
 <body>
+
+<div id="intro" aria-hidden="true">
+  <div class="ibg"></div>
+  <div class="iscrim"></div>
+  <div class="ispine"></div>
+  <div class="ilogo">
+    <img src="/logo-white.png" alt="Maka Projects">
+    <div class="itag">You get the director.</div>
+  </div>
+  <button class="iskip" id="iskip">Skip &#8594;</button>
+</div>
+
 
 <nav>
   <div class="wrap">
@@ -254,9 +293,10 @@
         <li><strong>Bachelor of Business — Massey University</strong><span>Diploma in Civil Engineering (Std.)</span></li>
       </ul>
     </div>
-    <div class="photo-ph">
-      [ Photo / drone imagery placeholder —<br>Camex project material approved for use ]
-    </div>
+    <figure class="about-photo">
+      <img src="/img/sh2-opotiki-road.jpg" alt="Aerial view of the completed SH2 Ōpōtiki corridor — new pavement running to the horizon, central North Island.">
+      <figcaption>SH2 Ōpōtiki corridor — pavement rehabilitation, central North Island.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -285,5 +325,34 @@
   <div class="wrap">© 2026 Maka Projects · New Zealand</div>
 </footer>
 
+<script>
+(function(){
+  var intro=document.getElementById('intro');
+  if(!intro) return;
+  var seen=false; try{seen=sessionStorage.getItem('makaIntroSeen')==='1';}catch(e){}
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(seen||reduce){ if(intro.parentNode) intro.parentNode.removeChild(intro); return; }
+  function dismiss(){
+    if(!intro) return;
+    intro.classList.add('hide');
+    document.body.classList.remove('intro-on');
+    try{sessionStorage.setItem('makaIntroSeen','1');}catch(e){}
+    window.removeEventListener('wheel',dismiss);
+    window.removeEventListener('touchmove',dismiss);
+    window.removeEventListener('keydown',onKey);
+    var node=intro; intro=null;
+    setTimeout(function(){ if(node&&node.parentNode) node.parentNode.removeChild(node); },850);
+  }
+  function onKey(){ dismiss(); }
+  document.body.classList.add('intro-on');
+  requestAnimationFrame(function(){ intro.classList.add('play'); });
+  document.getElementById('iskip').addEventListener('click',function(e){e.stopPropagation();dismiss();});
+  intro.addEventListener('click',dismiss);
+  window.addEventListener('wheel',dismiss,{passive:true});
+  window.addEventListener('touchmove',dismiss,{passive:true});
+  window.addEventListener('keydown',onKey);
+  setTimeout(dismiss, 12500);
+})();
+</script>
 </body>
 </html>
