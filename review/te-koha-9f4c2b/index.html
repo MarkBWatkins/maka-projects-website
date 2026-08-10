@@ -263,7 +263,7 @@
   </tbody>
 </table>
 
-<p>The two periods are the same length — eight financial periods either side of handover — which makes the delivery comparison direct. The first eight put <b>$210,607</b> of work in place per month. The eight since have put <b>$308,154</b> in place per month, <b>46% more</b>, and $780,378 more income across the same elapsed time.</p>
+<p>The two periods are the same length — eight financial periods either side of handover — which makes the delivery comparison direct. The first eight completed <b>$210,607</b> of revenue a month. The eight since have completed <b>$308,154</b> a month — <b>46% more</b>, and $780,378 more revenue across the same elapsed time.</p>
 
 <p>Two ways to read the margin improvement, both defensible:</p>
 <ul>
@@ -342,6 +342,14 @@
 
 <p>Had Camex resourced the Project Director role the way it did before November 2025, the same volume of work would have absorbed <b>2,004 hours and $180,077</b> instead of 445 hours and $80,100. The project's whole-of-life margin would today read <b>$467,940 — 11.28%</b> rather than $567,917 and 13.68%.</p>
 <p>Put another way: <b>roughly $100,000 of the $451,060 margin improvement is the resourcing change alone.</b> The remaining $351,083 is delivery.</p>
+
+<h3>Why 2,004 hours is not a 58-hour week</h3>
+<p>Spread across the eight months actually taken, 2,004 hours would be 57.6 hours a week, which no-one would accept as realistic. It does not spread that way, because the in-house model would not have delivered this work in eight months.</p>
+<p>The first eight periods ran at <b>$210,607</b> of income per month. At that pace the $2,465,231 delivered since handover takes <b>11.7 months, not 8</b> — a programme extension of <b>3.7 months</b>. Across 51 weeks, 2,004 hours is <b>39.4 hours a week</b>: one full-time Project Manager, which is precisely what the in-house model was.</p>
+<p>The same answer arrives from the other direction. Holding the in-house Project Manager at the 35.1 hours a week they actually worked, across those 51 weeks, gives 1,785 hours and <b>$160,399</b>. Two independent methods, the same territory — because once the programme is allowed to take the time the old pace implies, the apparent conflict between "hours scale with volume" and "hours scale with time" disappears.</p>
+<div class="note">
+<b>The extension carries its own cost, and none of it is counted above.</b> Site overhead on this project runs at <b>$27,432</b> per month. A 3.7-month extension is therefore on the order of <b>$100,000</b> of additional preliminaries and general — indicative rather than modelled — before any question of liquidated damages, extended subcontractor preliminaries, or the cost of the site staying open through a further winter. The $99,977 saving on the Project Director line is the narrow measure. The programme consequence sits on top of it.
+</div>
 
 <p>Two further points on the comparison:</p>
 <ul>
@@ -448,7 +456,7 @@ const QS=[
   lo:'No measurable effect',hi:'Materially changed the outcome'},
  {t:'Value for money',d:'Cost of the role against what the alternative would have cost.',
   lo:'Costs more than the alternative',hi:'Costs materially less, for more'},
- {t:'Programme efficiency',d:'How much work the project actually puts in place, month on month.',
+ {t:'Programme efficiency',d:'How much revenue the project actually completes, month on month.',
   lo:'Slower than it should be',hi:'Materially more work per month'},
  {t:'Client satisfaction',d:'How the client and the Engineer deal with Camex on this job — tone, feedback, complaints, escalations. Your own read; there is no figure for this one.',
   lo:'Worse than before',hi:'Noticeably better'}];
@@ -488,13 +496,13 @@ const SL=[
   lo:'0%',hi:'25%',act:13.68,actTxt:'13.68%',
   gap:v=>`<b>13.68%</b> — $567,917 on $4.15m. The work recognised since handover carried an <b>18.30%</b> margin, and the figure is struck after a $30,000 provision for defects.`},
  {dual:true,
-  t:'How much work do you think the project puts in place each month?',
-  s:'Eight financial periods either side of the November 2025 handover — the same elapsed time on both sides. Income recognised per month. Set both.',
+  t:'How much revenue do you think the project completes each month?',
+  s:'Eight financial periods either side of the November 2025 handover — the same elapsed time on both sides. Revenue completed per month. Set both.',
   d:[{lab:'First eight periods',def:250000},{lab:'Eight periods since',def:250000}],
   min:0,max:600000,step:10000,fmt:v=>'$'+Math.round(v).toLocaleString('en-NZ'),
   loTxt:'$0',hiTxt:'$600,000',acts:['$210,607','$308,154'],
   actTxt:'$210,607 vs $308,154',
-  gap:v=>`The first eight periods put <b>$210,607</b> of work in place per month. The eight since have put <b>$308,154</b> in place — <b>46% more</b> per month, and <b>$780,378</b> more income across the same elapsed time. Same contract, same crew, same site.`},
+  gap:v=>`The first eight periods completed <b>$210,607</b> of revenue a month. The eight since have completed <b>$308,154</b> — <b>46% more</b> a month, and <b>$780,378</b> more revenue across the same elapsed time. Same contract, same crew, same site.`},
  {t:'How many hours a week does an external Project Director need to run a job this size?',
   s:'A $4.15 million contract in its delivery and closeout phase. The Professional Services Agreement caps the role at 20 hours a week — set what you think it actually takes.',
   min:0,max:20,step:0.5,def:20,fmt:v=>v.toFixed(1)+' hrs',
