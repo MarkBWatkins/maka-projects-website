@@ -34,3 +34,10 @@
   for = "/favicon.svg"
   [headers.values]
     Cache-Control = "public, max-age=604800"
+
+# Private client review pages — not indexed, not linked from the site
+[[headers]]
+  for = "/review/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Cache-Control = "no-store"
