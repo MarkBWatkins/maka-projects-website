@@ -29,6 +29,11 @@
     padding:14px 32px;font:600 15px 'Segoe UI',system-ui,sans-serif;cursor:pointer;letter-spacing:.01em}
   .btn:hover{background:#31b3a0}
   .btn[disabled]{background:#3a4550;color:#7d848d;cursor:not-allowed}
+  .btn.big{font-size:21px;padding:22px 52px;border-radius:9px;letter-spacing:-.1px;
+    box-shadow:0 10px 30px rgba(42,160,143,.22)}
+  @keyframes unlockIn{0%{opacity:0;transform:translateY(14px) scale(.94)}
+    60%{opacity:1;transform:translateY(0) scale(1.04)}100%{opacity:1;transform:translateY(0) scale(1)}}
+  #detailWrap.on{animation:unlockIn .6s cubic-bezier(.34,1.4,.64,1) forwards}
   .btn.ghost{background:transparent;color:#b8bfc7;border:1px solid var(--line-d)}
   .btn.ghost:hover{background:#23282e;color:var(--cream)}
   .center{text-align:center}
@@ -68,6 +73,23 @@
   table.dark th:first-child,table.dark td:first-child{text-align:left}
   table.dark thead th{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
   .up{color:var(--teal-b)} .dn{color:#d98b3a}
+
+  #starOv{position:fixed;inset:0;background:#16202a;z-index:50;display:none;align-items:center;
+    justify-content:center;opacity:0;transition:opacity .9s ease}
+  #starRow{display:flex;gap:14px;justify-content:center;margin-bottom:34px}
+  #starRow .star{width:clamp(52px,12vw,96px);height:clamp(52px,12vw,96px);opacity:0;transform:scale(0)}
+  #starRow .star.gold{filter:drop-shadow(0 6px 22px rgba(244,185,66,.45))}
+  @keyframes starPop{
+    0%{transform:translateY(-80px) scale(.18) rotate(-65deg);opacity:0}
+    50%{transform:translateY(8px) scale(1.34) rotate(11deg);opacity:1}
+    68%{transform:translateY(-9px) scale(.93) rotate(-6deg);opacity:1}
+    84%{transform:translateY(3px) scale(1.07) rotate(3deg);opacity:1}
+    94%{transform:translateY(-2px) scale(.98) rotate(-1deg);opacity:1}
+    100%{transform:translateY(0) scale(1) rotate(0);opacity:1}}
+  #starHead{font-size:clamp(22px,4.4vw,34px);font-weight:650;letter-spacing:-.4px;color:#f6f2ea;
+    opacity:0;transition:opacity .5s ease;margin-bottom:10px}
+  #starSub{font-size:15px;color:#98a0a9;opacity:0;transition:opacity .5s ease .12s}
+  #starTap{font-size:12.5px;color:#5f676f;margin-top:38px;letter-spacing:.06em}
   .navrow{display:flex;justify-content:space-between;align-items:center;margin-top:30px;gap:12px}
 </style>
 <style>
@@ -110,7 +132,8 @@
   <input type="text" name="respondent"><input type="text" name="company">
   <input type="text" name="before_scores"><input type="text" name="after_scores">
   <input type="text" name="total_before"><input type="text" name="total_after"><input type="text" name="movement">
-  <input type="text" name="estimates"><input type="text" name="submitted_at">
+  <input type="text" name="estimates"><input type="text" name="stars"><input type="text" name="accuracy">
+  <input type="text" name="submitted_at">
 </form>
 <!-- ============ COVER ============ -->
 <section class="stage on" id="s0"><div class="inner" style="padding-top:6vh">
@@ -203,11 +226,22 @@
     </div>
     <div id="sendMsg" style="font-size:13.5px;margin-top:12px;color:#2aa08f;display:none"></div>
   </div>
-  <p class="center" style="color:#98a0a9;font-size:14.5px;margin-top:26px">
-  Everything behind those numbers is set out below — the monthly accounts, what the role costs against the
+  <p class="center" id="lockNote" style="color:#98a0a9;font-size:14.5px;margin-top:26px">
+  Send your results above to open the detail — the monthly accounts, what the role costs against the
   in-house alternative, the variation account, and where the project closes.</p>
-  <div class="center" style="margin-top:22px"><button class="btn" onclick="openReport()">Open the detail</button></div>
+  <div class="center" id="detailWrap" style="margin-top:30px;display:none">
+    <button class="btn big" onclick="openReport()">View detailed report</button>
+  </div>
 </div></section>
+
+<!-- ============ STAR OVERLAY ============ -->
+<div id="starOv"><div style="text-align:center;padding:0 22px">
+  <div class="kicker" style="margin-bottom:26px">Your estimates, scored</div>
+  <div id="starRow"></div>
+  <div id="starHead"></div>
+  <div id="starSub"></div>
+  <div id="starTap">tap to continue</div>
+</div></div>
 <!-- ============ REPORT ============ -->
 <section class="stage" id="s6" style="background:var(--cream);color:var(--ink);padding:0">
 <div id="reportbar" style="background:var(--ink);padding:14px 24px">
@@ -502,7 +536,7 @@ const SL=[
   s:'Eight financial periods either side of the November 2025 handover — the same elapsed time on both sides. Revenue completed per month. Set both.',
   d:[{lab:'First eight periods',def:250000},{lab:'Eight periods since',def:250000}],
   min:0,max:600000,step:10000,fmt:v=>'$'+Math.round(v).toLocaleString('en-NZ'),
-  loTxt:'$0',hiTxt:'$600,000',acts:['$210,607','$308,154'],
+  loTxt:'$0',hiTxt:'$600,000',acts:['$210,607','$308,154'],actNums:[210607,308154],
   actTxt:'$210,607 vs $308,154',
   gap:v=>`The first eight periods completed <b>$210,607</b> of revenue a month. The eight since have completed <b>$308,154</b> — <b>46% more</b> a month, and <b>$780,378</b> more revenue across the same elapsed time. Same contract, same crew, same site.`},
  {t:'How many hours a week does an external Project Director need to run a job this size?',
@@ -520,7 +554,7 @@ const SL=[
   s:'Margin generated in each period, divided by the project management cost charged in that same period. Set both.',
   d:[{lab:'In-house Project Manager',def:1.0},{lab:'External Project Director',def:1.0}],
   min:0,max:10,step:0.05,fmt:v=>'$'+v.toFixed(2),
-  loTxt:'$0.00',hiTxt:'$10.00',acts:['$0.95','$5.63'],
+  loTxt:'$0.00',hiTxt:'$10.00',acts:['$0.95','$5.63'],actNums:[0.95,5.63],
   actTxt:'$0.95 vs $5.63',
   gap:v=>`The in-house model cost <b>$123,073</b> and the project earned <b>$116,857</b> of margin over the same nine months — <b>$0.95 back for every $1 spent</b>. The external Project Director has cost <b>$80,100</b> and the project has added <b>$451,060</b> — <b>$5.63 for every $1</b>. Same job, same contract, <b>5.9 times</b> the return.`}];
 let slI=0; const SLV=[];
@@ -565,7 +599,8 @@ function slMove(){
   document.getElementById('slVal').textContent=q.fmt(v);
   r.style.setProperty('--pct',((v-q.min)/(q.max-q.min)*100)+'%');
 }
-function slNextQ(){ if(slI<SL.length-1){slI++;slShow();window.scrollTo(0,0);} else {drawReveal();go(3);} }
+function slNextQ(){ if(slI<SL.length-1){slI++;slShow();window.scrollTo(0,0);}
+  else {drawReveal();go(3);showStars();} }
 function slPrev(){ if(slI>0){slI--;slShow();window.scrollTo(0,0);} }
 
 function drawReveal(){
@@ -615,8 +650,67 @@ function showDelta(){
 }
 
 
+
+/* ---------- accuracy score & star rating ---------- */
+function bandPts(err){ return err<=0.10?100 : err<=0.20?80 : err<=0.35?60 : err<=0.50?40 : err<=0.75?20 : 0; }
+function accuracy(){
+  let pts=0;
+  SL.forEach((q,i)=>{
+    let err;
+    if(q.dual){
+      const v=Array.isArray(SLV[i])?SLV[i]:[q.d[0].def,q.d[1].def];
+      err=(Math.abs(v[0]-q.actNums[0])/q.actNums[0] + Math.abs(v[1]-q.actNums[1])/q.actNums[1])/2;
+    } else {
+      const v=SLV[i]!==undefined?SLV[i]:q.def;
+      err=Math.abs(v-q.act)/q.act;
+    }
+    pts+=bandPts(err);
+  });
+  const pct=pts/SL.length;
+  return {pct:Math.round(pct), stars: pct>=80?5 : pct>=60?4 : pct>=40?3 : pct>=20?2 : 1};
+}
+const STAR_MSG={5:'Spot on.',4:'Close.',3:'Not bad.',2:'Some way off.',1:'Nice try.'};
+let SCORE={pct:0,stars:0};
+
+function starSVG(filled){
+  return '<svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true">'+
+   '<path d="M12 1.8l3.09 6.26 6.91 1-5 4.87 1.18 6.87L12 17.56l-6.18 3.25L7 13.94l-5-4.87 6.91-1z" '+
+   'fill="'+(filled?'#f4b942':'none')+'" stroke="'+(filled?'#e0a52c':'#3a4550')+'" stroke-width="1.4" '+
+   'stroke-linejoin="round"/></svg>';
+}
+function showStars(done){
+  SCORE=accuracy();
+  const ov=document.getElementById('starOv'), row=document.getElementById('starRow');
+  const head=document.getElementById('starHead'), sub=document.getElementById('starSub');
+  row.innerHTML=''; head.style.opacity=0; sub.style.opacity=0;
+  ov.style.display='flex'; ov.style.opacity=1; ov.style.pointerEvents='auto';
+  for(let i=0;i<5;i++){
+    const d=document.createElement('div'); d.className='star'+(i<SCORE.stars?' gold':''); d.innerHTML=starSVG(i<SCORE.stars);
+    row.appendChild(d);
+  }
+  const kids=[...row.children];
+  let t=0; const step=430;
+  kids.forEach((k,i)=>{ setTimeout(()=>{ k.style.animation='starPop .62s cubic-bezier(.28,1.2,.5,1) forwards'; }, t); t+=step; });
+  setTimeout(()=>{
+    head.textContent=STAR_MSG[SCORE.stars]+' You scored '+SCORE.stars+(SCORE.stars===1?' star':' stars')+'.';
+    sub.textContent='Accuracy '+SCORE.pct+'% across the seven estimates.';
+    head.style.opacity=1; sub.style.opacity=1;
+  }, t+120);
+  const finish=()=>{ ov.style.opacity=0; ov.style.pointerEvents='none';
+    setTimeout(()=>{ov.style.display='none'; if(done)done();},900); };
+  const timer=setTimeout(finish, t+2600);
+  ov.onclick=()=>{clearTimeout(timer);finish();};
+}
+
 /* ---------- results capture (Netlify Forms) ---------- */
 function enc(d){return Object.keys(d).map(k=>encodeURIComponent(k)+'='+encodeURIComponent(d[k])).join('&');}
+
+function unlockReport(msg){
+  const w=document.getElementById('detailWrap'), n=document.getElementById('lockNote');
+  if(n) n.textContent=msg;
+  if(w && w.style.display==='none'){ w.style.display='block'; w.classList.add('on');
+    setTimeout(()=>w.scrollIntoView({behavior:'smooth',block:'center'}),120); }
+}
 function sendResults(){
   const btn=document.getElementById('sendBtn'), msg=document.getElementById('sendMsg');
   const est=SL.map((q,i)=>{
@@ -630,16 +724,19 @@ function sendResults(){
     before_scores:QS.map((q,i)=>q.t+': '+A1[i]).join(' | '),
     after_scores:QS.map((q,i)=>q.t+': '+A2[i]).join(' | '),
     total_before:t1+'/25', total_after:t2+'/25', movement:(t2-t1>0?'+':'')+(t2-t1),
-    estimates:est, submitted_at:new Date().toISOString()
+    estimates:est, stars:SCORE.stars+'/5', accuracy:SCORE.pct+'%', submitted_at:new Date().toISOString()
   };
   btn.disabled=true; btn.textContent='Sending…';
   fetch('/',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:enc(data)})
     .then(r=>{ msg.style.display='block';
-      if(r.ok){msg.textContent='Sent — thank you.';btn.textContent='Sent';}
-      else{msg.style.color='#d98b3a';msg.textContent='Could not send from here. This works once the page is live on the Maka site.';btn.disabled=false;btn.textContent='Send';}})
+      if(r.ok){msg.textContent='Sent — thank you.';btn.textContent='Sent';
+        unlockReport('Everything behind those numbers is set out below.');}
+      else{msg.style.color='#d98b3a';msg.textContent='Could not send, but the report is open below.';btn.disabled=false;btn.textContent='Send';
+        unlockReport('Everything behind those numbers is set out below.');}})
     .catch(()=>{ msg.style.display='block';msg.style.color='#d98b3a';
-      msg.textContent='Could not send from here. This works once the page is live on the Maka site.';
-      btn.disabled=false;btn.textContent='Send';});
+      msg.textContent='Could not send, but the report is open below.';
+      btn.disabled=false;btn.textContent='Send';
+      unlockReport('Everything behind those numbers is set out below.');});
 }
 
 drawSurvey('survey1',A1,'s1next');
